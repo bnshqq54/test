@@ -28,6 +28,14 @@
                         </li>
                     {% endfor %}
                 </ul>
+
+                <form class="d-flex me-3" method="get" action="{% url 'main:product_list' %}">
+                        <input class="form-control me-2" type="search" name="q"
+                            placeholder="Поиск товаров..." value="{{ request.GET.q }}">
+                        <button class="btn btn-outline-light" type="submit">
+                         <i class="bi bi-search"></i>
+                    </button>
+                </form>
                 
                 <div class="d-flex">
                     <a href="{% url 'cart:cart_detail' %}" class="btn btn-outline-light position-relative me-3">
@@ -66,10 +74,8 @@
                 </div>
                 <div class="col-md-4">
                     <h5>Мы в соцсетях</h5>
-                    <a href="#" class="text-white me-2"><i class="bi bi-facebook"></i></a>
                     <a href="#" class="text-white me-2"><i class="bi bi-instagram"></i></a>
                     <a href="#" class="text-white me-2"><i class="bi bi-telegram"></i></a>
-                    <a href="#" class="text-white"><i class="bi bi-vk"></i></a>
                 </div>
             </div>
         </div>

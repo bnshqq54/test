@@ -4,6 +4,14 @@
     {% if category %}{{ category.name }}{% else %}Товары{% endif %}
 {% endblock %}
 
+{% if query %}
+    <div class="alert alert-info">
+        Результаты поиска по запросу: <strong>«{{ query }}»</strong>
+        — найдено {{ products|length }} товар(ов).
+        <a href="{% url 'main:product_list' %}">Сбросить</a>
+    </div>
+{% endif %}
+
 {% block content %}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>{% if category %}{{ category.name }}{% else %}Все товары{% endif %}</h1>

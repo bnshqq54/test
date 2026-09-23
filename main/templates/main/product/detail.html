@@ -10,7 +10,7 @@
             </div>
             <div class="col-md-6">
                 <h1>{{ product.name }}</h1>
-                <p class="price h4 text-danger">{{ product.price }} руб.</p>
+                <p class="price h4 text-dark">{{ product.price }} руб.</p>
                 <p class="text-muted">Категория: 
                     <a href="{{ product.category.get_absolute_url }}">
                         {{ product.category.name }}
@@ -21,11 +21,16 @@
                     <p>{{ product.description|linebreaks }}</p>
                 </div>
                 <div class="mt-4">
-                    <form action="{% url "cart:cart_add" product.id %}" method="post">
-                        {{ cart_product_form }}
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary btn-lg">Добавить в корзину</button>
-                    </form>
+                <form action="{% url 'cart:cart_add' product.id %}" method="post">
+                    <div class="mb-3">
+                        <label for="{{ cart_product_form.quantity.id_for_label }}" class="form-label">
+                            {{ cart_product_form.quantity.label }}
+                        </label>
+                        {{ cart_product_form.quantity }}
+                    </div>
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">Добавить в корзину</button>
+                </form>
                 </div>
             </div>
         </div>

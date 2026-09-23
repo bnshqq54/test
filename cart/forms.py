@@ -1,7 +1,16 @@
 from django import forms
 
 
+from django import forms
+
 class CartAddProductForm(forms.Form):
-    quantity = forms.IntegerField(min_value=1, max_value=20, initial=1, 
-                                  widget = forms.NumberInput(attrs={'class': 'form-control'}))
+    QUANTITY_CHOICES = [(i, str(i)) for i in range(1, 11)]
+    
+    quantity = forms.TypedChoiceField(
+        choices=QUANTITY_CHOICES,
+        coerce=int,              
+        initial=1,                
+        label='Количество',       
+        widget=forms.Select(attrs={'class': 'form-select'})  
+    )
     override = forms.BooleanField(required=False, initial=False, widget=forms.HiddenInput)
