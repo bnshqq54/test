@@ -19,23 +19,30 @@ class Category(models.Model):
     
 
 class Product(models.Model):
-    category = models.ForeignKey(Category, related_name='products',
-                                 on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, db_index=True)
-    slug = models.SlugField(max_length=100, unique=100)
-    image = models.ImageField(upload_to='products/%Y/%m/%d', blank=True)
+    category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
+    name = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200)
+    image = models.ImageField(upload_to='products/', blank=True, null=True)
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    discount = models.PositiveIntegerField(default=0, help_text='Скидка в %')
     available = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        ordering = ('name',)
+    @property
+    def discounted_price(self):
+        if self.discount:
+            return self.price - (self.price * self.discount / 100)
+        return self.price
+
+    @property
+    def has_discount(self):
+        return self.discount > 0
+
+    def get_absolute_url(self):
+        return reverse('main:product_detail', args=[self.id, self.slug])
 
     def __str__(self):
         return self.name
-
-    def get_absolute_url(self):
-        return reverse("main:product_detail", args=[self.id, self.slug])
     

@@ -4,6 +4,38 @@
     {% if category %}{{ category.name }}{% else %}Товары{% endif %}
 {% endblock %}
 
+{% block content %}
+
+<style>
+    .card {
+        border: 2px solid #1a1a1a;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        position: relative;
+    }
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+    .card-img-top {
+        display: block;
+    }
+    .discount-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #ffc107;
+        color: #1a1a1a;
+        padding: 6px 10px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        border-radius: 6px;
+        z-index: 3;
+    }
+</style>
+
 {% if query %}
     <div class="alert alert-info">
         Результаты поиска по запросу: <strong>«{{ query }}»</strong>
@@ -12,42 +44,61 @@
     </div>
 {% endif %}
 
-{% block content %}
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>{% if category %}{{ category.name }}{% else %}Все товары{% endif %}</h1>
-        <div class="dropdown">
-            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                Сортировка
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <li><a class="dropdown-item" href="?sort=name">По названию (А-Я)</a></li>
-                <li><a class="dropdown-item" href="?sort=-name">По названию (Я-А)</a></li>
-                <li><a class="dropdown-item" href="?sort=price">По цене (дешевые)</a></li>
-                <li><a class="dropdown-item" href="?sort=-price">По цене (дорогие)</a></li>
-            </ul>
-        </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>{% if category %}{{ category.name }}{% else %}Все товары{% endif %}</h1>
+    <div class="dropdown">
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            Сортировка
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li><a class="dropdown-item" href="?sort=name">По названию (А-Я)</a></li>
+            <li><a class="dropdown-item" href="?sort=-name">По названию (Я-А)</a></li>
+            <li><a class="dropdown-item" href="?sort=price">По цене (дешевые)</a></li>
+            <li><a class="dropdown-item" href="?sort=-price">По цене (дорогие)</a></li>
+        </ul>
     </div>
-    
-    {% if not products %}
-        <div class="alert alert-info">Товары в этой категории отсутствуют</div>
-    {% else %}
-        <div class="row">
-            {% for product in products %}
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <a href="{{ product.get_absolute_url }}">
-                            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-                        </a>
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">
-                                <a href="{{ product.get_absolute_url }}" class="text-decoration-none">{{ product.name }}</a>
-                            </h5>
-                            <p class="card-text mt-auto">{{ product.price }} руб.</p>
-                            <a href="{{ product.get_absolute_url }}" class="btn btn-outline-primary mt-2">Подробнее</a>
+</div>
+
+{% if not products %}
+    <div class="alert alert-info">Товары в этой категории отсутствуют</div>
+{% else %}
+    <div class="row">
+        {% for product in products %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+
+                    {% if product.has_discount %}
+                        <span class="discount-badge">Скидка {{ product.discount }} %</span>
+                    {% endif %}
+
+                    <a href="{{ product.get_absolute_url }}">
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                    </a>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">
+                            <a href="{{ product.get_absolute_url }}" class="text-decoration-none">{{ product.name }}</a>
+                        </h5>
+
+                        <div class="mt-auto">
+                            {% if product.has_discount %}
+                                <span class="text-muted text-decoration-line-through">
+                                    {{ product.price }} руб.
+                                </span>
+                                <span class="fw-bold text-danger ms-2">
+                                    {{ product.discounted_price|floatformat:2 }} руб.
+                                </span>
+                            {% else %}
+                                <span>{{ product.price }} руб.</span>
+                            {% endif %}
                         </div>
+
+                        <a href="{{ product.get_absolute_url }}" class="btn btn-outline-primary mt-2">Подробнее</a>
                     </div>
                 </div>
-            {% endfor %}
-        </div>
-    {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
 {% endblock %}
